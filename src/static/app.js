@@ -3,6 +3,79 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const activityPlaceholder = '<option value="">-- Select an activity --</option>';
+
+  function createDetailRow(label, value) {
+    const row = document.createElement("p");
+    const strong = document.createElement("strong");
+
+    strong.textContent = `${label}: `;
+    row.appendChild(strong);
+    row.append(value);
+
+    return row;
+  }
+
+  function createParticipantSection(participants) {
+    const section = document.createElement("div");
+    section.className = "participants-section";
+
+    const header = document.createElement("div");
+    header.className = "participants-header";
+
+    const title = document.createElement("h5");
+    title.textContent = "Participants";
+
+    const count = document.createElement("span");
+    count.className = "participants-count";
+    count.textContent = `${participants.length} enrolled`;
+
+    header.append(title, count);
+    section.appendChild(header);
+
+    if (participants.length === 0) {
+      const emptyState = document.createElement("p");
+      emptyState.className = "participants-empty";
+      emptyState.textContent = "No one has signed up yet.";
+      section.appendChild(emptyState);
+      return section;
+    }
+
+    const list = document.createElement("ul");
+    list.className = "participants-list";
+
+    participants.forEach((participant) => {
+      const item = document.createElement("li");
+      item.textContent = participant;
+      list.appendChild(item);
+    });
+
+    section.appendChild(list);
+    return section;
+  }
+
+  function createActivityCard(name, details) {
+    const activityCard = document.createElement("div");
+    activityCard.className = "activity-card";
+
+    const spotsLeft = details.max_participants - details.participants.length;
+    const title = document.createElement("h4");
+    const description = document.createElement("p");
+
+    title.textContent = name;
+    description.className = "activity-description";
+    description.textContent = details.description;
+
+    activityCard.append(
+      title,
+      description,
+      createDetailRow("Schedule", details.schedule),
+      createDetailRow("Availability", `${spotsLeft} spots left`),
+      createParticipantSection(details.participants)
+    );
+
+    return activityCard;
+  }
 
   // Function to fetch activities from API
   async function fetchActivities() {
@@ -10,22 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/activities");
       const activities = await response.json();
 
-      // Clear loading message
+      // Reset rendered content before repopulating from the API.
       activitiesList.innerHTML = "";
+      activitySelect.innerHTML = activityPlaceholder;
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
-
-        const spotsLeft = details.max_participants - details.participants.length;
-
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
+        const activityCard = createActivityCard(name, details);
 
         activitiesList.appendChild(activityCard);
 
@@ -60,11 +124,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         messageDiv.textContent = result.message;
-        messageDiv.className = "success";
+        messageDiv.className = "message success";
         signupForm.reset();
+        await fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
-        messageDiv.className = "error";
+        messageDiv.className = "message error";
       }
 
       messageDiv.classList.remove("hidden");
@@ -75,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 5000);
     } catch (error) {
       messageDiv.textContent = "Failed to sign up. Please try again.";
-      messageDiv.className = "error";
+      messageDiv.className = "message error";
       messageDiv.classList.remove("hidden");
       console.error("Error signing up:", error);
     }
