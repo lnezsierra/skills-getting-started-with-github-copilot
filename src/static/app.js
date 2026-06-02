@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -22,11 +23,23 @@ document.addEventListener("DOMContentLoaded", () => {
         // Compute remaining seats based on current participants.
         const spotsLeft = details.max_participants - details.participants.length;
 
+        const participantsMarkup = details.participants.length
+          ? details.participants
+              .map((studentEmail) => `<li class="student-chip">${studentEmail}</li>`)
+              .join("")
+          : '<li class="student-chip empty">No students registered yet</li>';
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <div class="students-section">
+            <h5>Registered Students</h5>
+            <ul class="students-list">
+              ${participantsMarkup}
+            </ul>
+          </div>
         `;
 
         activitiesList.appendChild(activityCard);
@@ -65,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        fetchActivities();
       } else {
         // Error path: prefer API detail when available.
         messageDiv.textContent = result.detail || "An error occurred";
