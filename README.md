@@ -1,37 +1,114 @@
-<div align="center">
+# Sistema de Actividades Extracurriculares (FastAPI)
 
-# 🎉 Congratulations lnezsierra! 🎉
+Aplicacion web simple para gestionar actividades extracurriculares en una escuela.
+Incluye:
+- Backend con FastAPI.
+- Frontend estatico (HTML, CSS, JavaScript).
+- API para listar actividades y registrar estudiantes.
 
-<img src="https://octodex.github.com/images/welcometocat.png" height="200px" />
+## Descripcion rapida
 
-### 🌟 You've successfully completed the exercise! 🌟
+El proyecto permite:
+- Ver actividades disponibles (descripcion, horario y cupos restantes).
+- Registrar un correo de estudiante en una actividad.
 
-## 🚀 Share Your Success!
+La informacion se guarda en memoria dentro de [src/app.py](src/app.py), por lo que se reinicia cada vez que se apaga el servidor.
 
-**Show off your new skills and inspire others!**
+## Estructura del proyecto
 
-<a href="https://twitter.com/intent/tweet?text=I%20just%20completed%20the%20%22Getting%20Started%20with%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Flnezsierra%2Fskills-getting-started-with-github-copilot%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
-  <img src="https://img.shields.io/badge/Share%20on%20X-1da1f2?style=for-the-badge&logo=x&logoColor=white" alt="Share on X" />
-</a>
-<a href="https://bsky.app/intent/compose?text=I%20just%20completed%20the%20%22Getting%20Started%20with%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Flnezsierra%2Fskills-getting-started-with-github-copilot%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
-  <img src="https://img.shields.io/badge/Share%20on%20Bluesky-0085ff?style=for-the-badge&logo=bluesky&logoColor=white" alt="Share on Bluesky" />
-</a>
-<a href="https://www.linkedin.com/feed/?shareActive=true&text=I%20just%20completed%20the%20%22Getting%20Started%20with%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Flnezsierra%2Fskills-getting-started-with-github-copilot%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
-  <img src="https://img.shields.io/badge/Share%20on%20LinkedIn-0077b5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Share on LinkedIn" />
-</a>
+```text
+.
+├── README.md
+├── requirements.txt
+└── src
+    ├── app.py
+    └── static
+        ├── app.js
+        ├── index.html
+        └── styles.css
+```
 
-### 🎯 What's Next?
+Archivos principales:
+- [src/app.py](src/app.py): API FastAPI y datos iniciales.
+- [src/static/index.html](src/static/index.html): interfaz web.
+- [src/static/app.js](src/static/app.js): logica cliente para consumir la API.
+- [src/static/styles.css](src/static/styles.css): estilos de la interfaz.
 
-**Keep the momentum going!**
+## Requisitos
 
-[![](https://img.shields.io/badge/Return%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/lnezsierra/skills-getting-started-with-github-copilot/issues/1)
-[![GitHub Skills](https://img.shields.io/badge/Explore%20GitHub%20Skills-000000?style=for-the-badge&logo=github&logoColor=white)](https://learn.github.com/skills))
+- Python 3.10 o superior.
+- pip.
 
-*There's no better way to learn than building things!* 🚀
+Dependencias del proyecto en [requirements.txt](requirements.txt):
+- fastapi
+- uvicorn
 
-</div>
+## Instalacion
 
----
+1. Clonar el repositorio.
+2. (Opcional, recomendado) crear y activar entorno virtual.
+3. Instalar dependencias:
 
-&copy; 2025 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
+```bash
+pip install -r requirements.txt
+```
+
+## Ejecucion local
+
+Desde la raiz del proyecto ejecuta:
+
+```bash
+uvicorn src.app:app --reload
+```
+
+Luego abre en el navegador:
+- Aplicacion web: http://127.0.0.1:8000/
+- Documentacion Swagger: http://127.0.0.1:8000/docs
+
+## Uso de la API
+
+### 1) Listar actividades
+
+`GET /activities`
+
+Ejemplo:
+
+```bash
+curl http://127.0.0.1:8000/activities
+```
+
+### 2) Registrar estudiante en una actividad
+
+`POST /activities/{activity_name}/signup?email=correo@dominio.com`
+
+Ejemplo:
+
+```bash
+curl -X POST "http://127.0.0.1:8000/activities/Chess%20Club/signup?email=ana@mergington.edu"
+```
+
+## Flujo de la aplicacion
+
+1. El navegador abre [src/static/index.html](src/static/index.html).
+2. [src/static/app.js](src/static/app.js) hace `GET /activities`.
+3. El usuario envia el formulario.
+4. Se hace `POST /activities/{activity_name}/signup` con el email.
+5. Se muestra mensaje de exito o error en pantalla.
+
+## Limitaciones actuales
+
+- No hay base de datos (los cambios no son persistentes).
+- No se valida si el estudiante ya esta inscrito.
+- No se impide sobrepasar `max_participants`.
+
+## Ideas de mejora
+
+- Persistencia con SQLite o PostgreSQL.
+- Validaciones de negocio (duplicados y cupos maximos).
+- Autenticacion para administradores y estudiantes.
+- Pruebas automaticas para endpoints.
+
+## Licencia
+
+Este proyecto se distribuye bajo la licencia MIT. Consulta [LICENSE](LICENSE).
 

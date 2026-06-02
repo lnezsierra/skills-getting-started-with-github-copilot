@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Cache DOM references used throughout the app.
   const activitiesList = document.getElementById("activities-list");
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
-  // Function to fetch activities from API
+  // Fetch activities from the backend and render cards + select options.
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const activityCard = document.createElement("div");
         activityCard.className = "activity-card";
 
+        // Compute remaining seats based on current participants.
         const spotsLeft = details.max_participants - details.participants.length;
 
         activityCard.innerHTML = `
@@ -29,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         activitiesList.appendChild(activityCard);
 
-        // Add option to select dropdown
+        // Keep the signup dropdown synchronized with visible activities.
         const option = document.createElement("option");
         option.value = name;
         option.textContent = name;
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Handle form submission
+  // Submit signup requests to the API and display server feedback.
   signupForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -59,10 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (response.ok) {
+        // Success path: show confirmation and clear form.
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
       } else {
+        // Error path: prefer API detail when available.
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
       }
@@ -74,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.classList.add("hidden");
       }, 5000);
     } catch (error) {
+      // Network or unexpected runtime errors.
       messageDiv.textContent = "Failed to sign up. Please try again.";
       messageDiv.className = "error";
       messageDiv.classList.remove("hidden");
@@ -81,6 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initialize app
+  // Initial data load when the page is ready.
   fetchActivities();
 });
