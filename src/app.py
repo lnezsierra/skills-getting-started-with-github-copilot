@@ -61,9 +61,17 @@ def signup_for_activity(activity_name: str, email: str):
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
 
+    # Only school emails are allowed for new registrations.
+    normalized_email = email.strip().lower()
+    if not normalized_email.endswith("@mergington.edu"):
+        raise HTTPException(
+            status_code=400,
+            detail="Email must end with @mergington.edu"
+        )
+
     # Retrieve activity and append the student email.
     activity = activities[activity_name]
-    activity["participants"].append(email)
+    activity["participants"].append(normalized_email)
 
     # Return a human-readable confirmation for the frontend.
-    return {"message": f"Signed up {email} for {activity_name}"}
+    return {"message": f"Signed up {normalized_email} for {activity_name}"}
