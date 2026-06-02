@@ -71,6 +71,12 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Retrieve activity and append the student email.
     activity = activities[activity_name]
+    if normalized_email in activity["participants"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Student is already registered for this activity"
+        )
+
     activity["participants"].append(normalized_email)
 
     # Return a human-readable confirmation for the frontend.
