@@ -26,7 +26,7 @@
         <form id="signup-form">
           <div class="form-group">
             <label for="email">Student Email:</label>
-            <input type="email" id="email" required placeholder="your-email@mergington.edu" />
+            <input type="email" id="email" required placeholder="your-email@merginton.edu" />
           </div>
           <div class="form-group">
             <label for="activity">Select Activity:</label>
@@ -38,6 +38,12 @@
           <button type="submit">Sign Up</button>
         </form>
         <div id="message" class="hidden"></div>
+
+        <div id="participants-container" class="participants-container">
+          <h4>Registered Students</h4>
+          <p id="participants-empty" class="info">Select an activity to view registered students.</p>
+          <ul id="participants-list" class="participants-list hidden"></ul>
+        </div>
       </section>
     </main>
 

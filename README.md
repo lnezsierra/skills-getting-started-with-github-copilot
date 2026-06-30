@@ -1,114 +1,61 @@
-# Sistema de Actividades Extracurriculares (FastAPI)
+# Mergington High School Activities
 
-Aplicacion web simple para gestionar actividades extracurriculares en una escuela.
-Incluye:
-- Backend con FastAPI.
-- Frontend estatico (HTML, CSS, JavaScript).
-- API para listar actividades y registrar estudiantes.
+This project is a small FastAPI app with a static frontend for browsing extracurricular activities and signing up students by email.
 
-## Descripcion rapida
+The app serves two pieces:
 
-El proyecto permite:
-- Ver actividades disponibles (descripcion, horario y cupos restantes).
-- Registrar un correo de estudiante en una actividad.
+- a JSON API for listing activities and registering participants
+- a browser UI in `src/static/` that consumes the API
 
-La informacion se guarda en memoria dentro de [src/app.py](src/app.py), por lo que se reinicia cada vez que se apaga el servidor.
+## Features
 
-## Estructura del proyecto
+- View a catalog of school activities with descriptions, schedules, and remaining spots
+- Select an activity and see the registered students
+- Sign up with a school email address
+- Store activity data in memory for the current server session
 
-```text
-.
-├── README.md
-├── requirements.txt
-└── src
-    ├── app.py
-    └── static
-        ├── app.js
-        ├── index.html
-        └── styles.css
-```
+## Requirements
 
-Archivos principales:
-- [src/app.py](src/app.py): API FastAPI y datos iniciales.
-- [src/static/index.html](src/static/index.html): interfaz web.
-- [src/static/app.js](src/static/app.js): logica cliente para consumir la API.
-- [src/static/styles.css](src/static/styles.css): estilos de la interfaz.
+- Python 3.10 or newer
+- `pip`
 
-## Requisitos
+## Setup
 
-- Python 3.10 o superior.
-- pip.
-
-Dependencias del proyecto en [requirements.txt](requirements.txt):
-- fastapi
-- uvicorn
-
-## Instalacion
-
-1. Clonar el repositorio.
-2. (Opcional, recomendado) crear y activar entorno virtual.
-3. Instalar dependencias:
+Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Ejecucion local
+## Run the app
 
-Desde la raiz del proyecto ejecuta:
-
-```bash
-uvicorn src.app:app --reload
-```
-
-Luego abre en el navegador:
-- Aplicacion web: http://127.0.0.1:8000/
-- Documentacion Swagger: http://127.0.0.1:8000/docs
-
-## Uso de la API
-
-### 1) Listar actividades
-
-`GET /activities`
-
-Ejemplo:
+Start the FastAPI app with Uvicorn:
 
 ```bash
-curl http://127.0.0.1:8000/activities
+uvicorn src.main:app --reload --port 8000
 ```
 
-### 2) Registrar estudiante en una actividad
+Open `http://127.0.0.1:8000` in your browser.
 
-`POST /activities/{activity_name}/signup?email=correo@dominio.com`
+## API
 
-Ejemplo:
+The backend exposes these routes:
 
-```bash
-curl -X POST "http://127.0.0.1:8000/activities/Chess%20Club/signup?email=ana@mergington.edu"
-```
+- `GET /activities` - list all activities and their current participants
+- `GET /activities/{activity_name}/participants` - get the registered participants for one activity
+- `POST /activities/{activity_name}/signup?email=user@merginton.edu` - sign up a student for an activity
 
-## Flujo de la aplicacion
+The application expects emails to end with `@merginton.edu`.
 
-1. El navegador abre [src/static/index.html](src/static/index.html).
-2. [src/static/app.js](src/static/app.js) hace `GET /activities`.
-3. El usuario envia el formulario.
-4. Se hace `POST /activities/{activity_name}/signup` con el email.
-5. Se muestra mensaje de exito o error en pantalla.
+## Project structure
 
-## Limitaciones actuales
+- `src/main.py` - FastAPI application setup and root route
+- `src/routes/` - API route definitions
+- `src/services/` - business logic and validation
+- `src/data/` - in-memory activity store
+- `src/static/` - frontend HTML, CSS, and JavaScript
 
-- No hay base de datos (los cambios no son persistentes).
-- No se valida si el estudiante ya esta inscrito.
-- No se impide sobrepasar `max_participants`.
+## Notes
 
-## Ideas de mejora
-
-- Persistencia con SQLite o PostgreSQL.
-- Validaciones de negocio (duplicados y cupos maximos).
-- Autenticacion para administradores y estudiantes.
-- Pruebas automaticas para endpoints.
-
-## Licencia
-
-Este proyecto se distribuye bajo la licencia MIT. Consulta [LICENSE](LICENSE).
-
+- Activity data is stored in memory, so it resets when the server restarts.
+- The root path redirects to the static UI at `/static/index.html`.
