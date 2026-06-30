@@ -9,6 +9,18 @@ def list_activities():
     return get_activities()
 
 
+def get_activity_participants(activity_name: str):
+    """Return the registered participant emails for one activity."""
+    activity = get_activity(activity_name)
+    if activity is None:
+        raise HTTPException(status_code=404, detail="Activity not found, sorry")
+
+    return {
+        "activity": activity_name,
+        "participants": activity["participants"]
+    }
+
+
 def signup_for_activity(activity_name: str, email: str):
     """Sign up a student for an activity."""
     normalized_email = email.strip().lower()
