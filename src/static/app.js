@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const REQUIRED_EMAIL_DOMAIN = "@merginton.edu";
+
   // Cache DOM references used throughout the app.
   const activitiesList = document.getElementById("activities-list");
   const activitySelect = document.getElementById("activity");
@@ -47,8 +49,15 @@ document.addEventListener("DOMContentLoaded", () => {
   signupForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const activity = document.getElementById("activity").value;
+
+    if (!email.endsWith(REQUIRED_EMAIL_DOMAIN)) {
+      messageDiv.textContent = `Email must use the ${REQUIRED_EMAIL_DOMAIN} domain`;
+      messageDiv.className = "error";
+      messageDiv.classList.remove("hidden");
+      return;
+    }
 
     try {
       const response = await fetch(
