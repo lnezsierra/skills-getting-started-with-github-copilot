@@ -89,3 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial data load when the page is ready.
   fetchActivities();
 });
+
+
+
+
+
+
