@@ -17,6 +17,42 @@ activities = {
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    "Painting Studio": {
+        "description": "Learn painting techniques and create artwork",
+        "schedule": "Mondays and Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 15,
+        "participants": ["alice@mergington.edu"]
+    },
+    "Digital Art": {
+        "description": "Create digital illustrations and graphic designs",
+        "schedule": "Saturdays, 1:00 PM - 3:00 PM",
+        "max_participants": 18,
+        "participants": ["james@mergington.edu", "lucy@mergington.edu"]
+    },
+    "Debate Society": {
+        "description": "Develop critical thinking and public speaking skills through debate",
+        "schedule": "Thursdays, 5:00 PM - 6:30 PM",
+        "max_participants": 25,
+        "participants": ["robert@mergington.edu", "claire@mergington.edu"]
+    },
+    "Math Olympiad": {
+        "description": "Prepare for mathematical competitions and solve challenging problems",
+        "schedule": "Tuesdays, 6:00 PM - 7:30 PM",
+        "max_participants": 16,
+        "participants": ["adam@mergington.edu"]
+    },
+    "Web Development": {
+        "description": "Build modern web applications using HTML, CSS, and JavaScript",
+        "schedule": "Wednesdays and Fridays, 5:00 PM - 6:00 PM",
+        "max_participants": 22,
+        "participants": ["noah@mergington.edu", "grace@mergington.edu"]
+    },
+    "Robotics Club": {
+        "description": "Design and build robots for competitions",
+        "schedule": "Mondays and Thursdays, 6:00 PM - 7:30 PM",
+        "max_participants": 14,
+        "participants": ["isaac@mergington.edu", "zoe@mergington.edu"]
     }
 }
 
