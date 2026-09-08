@@ -1,20 +1,18 @@
-# Sistema de Actividades Extracurriculares (FastAPI)
+# Extracurricular Activities System (FastAPI)
 
-Aplicacion web simple para gestionar actividades extracurriculares en una escuela.
-Incluye:
-- Backend con FastAPI.
-- Frontend estatico (HTML, CSS, JavaScript).
-- API para listar actividades y registrar estudiantes.
+A simple web application for managing extracurricular activities at Mergington High School. It includes a FastAPI backend, a static HTML/CSS/JavaScript frontend, and an API for viewing activities and registering students.
 
-## Descripcion rapida
+## Features
 
-El proyecto permite:
-- Ver actividades disponibles (descripcion, horario y cupos restantes).
-- Registrar un correo de estudiante en una actividad.
+- View each activity's description, schedule, enrollment, and remaining capacity.
+- Register for an activity directly from its activity card.
+- Accept only student email addresses in the `@mergington.edu` domain.
+- Prevent a student from registering for the same activity more than once.
+- Disable registration buttons in the web interface when an activity is full.
 
-La informacion se guarda en memoria dentro de [src/app.py](src/app.py), por lo que se reinicia cada vez que se apaga el servidor.
+Activity and registration data is stored in memory in [src/app.py](src/app.py). All changes are reset when the server restarts.
 
-## Estructura del proyecto
+## Project Structure
 
 ```text
 .
@@ -28,87 +26,105 @@ La informacion se guarda en memoria dentro de [src/app.py](src/app.py), por lo q
         └── styles.css
 ```
 
-Archivos principales:
-- [src/app.py](src/app.py): API FastAPI y datos iniciales.
-- [src/static/index.html](src/static/index.html): interfaz web.
-- [src/static/app.js](src/static/app.js): logica cliente para consumir la API.
-- [src/static/styles.css](src/static/styles.css): estilos de la interfaz.
+Key files:
 
-## Requisitos
+- [src/app.py](src/app.py): FastAPI application, API endpoints, validation, and initial activity data.
+- [src/static/index.html](src/static/index.html): web interface markup.
+- [src/static/app.js](src/static/app.js): client-side activity rendering and registration logic.
+- [src/static/styles.css](src/static/styles.css): interface styles.
 
-- Python 3.10 o superior.
-- pip.
+## Requirements
 
-Dependencias del proyecto en [requirements.txt](requirements.txt):
-- fastapi
-- uvicorn
+- Python 3.10 or later
+- pip
 
-## Instalacion
+Project dependencies are listed in [requirements.txt](requirements.txt):
 
-1. Clonar el repositorio.
-2. (Opcional, recomendado) crear y activar entorno virtual.
-3. Instalar dependencias:
+- `fastapi`
+- `uvicorn`
+
+## Installation
+
+1. Clone the repository.
+2. Optionally, create and activate a virtual environment.
+3. Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Ejecucion local
+## Run Locally
 
-Desde la raiz del proyecto ejecuta:
+From the project root, run:
 
 ```bash
 uvicorn src.app:app --reload
 ```
 
-Luego abre en el navegador:
-- Aplicacion web: http://127.0.0.1:8000/
-- Documentacion Swagger: http://127.0.0.1:8000/docs
+Then open:
 
-## Uso de la API
+- Web application: http://127.0.0.1:8000/
+- Swagger API documentation: http://127.0.0.1:8000/docs
 
-### 1) Listar actividades
+The root URL redirects to the static application at `/static/index.html`.
+
+## API Usage
+
+### List Activities
 
 `GET /activities`
 
-Ejemplo:
+Returns all activities, including their descriptions, schedules, capacities, and current participants.
+
+Example:
 
 ```bash
 curl http://127.0.0.1:8000/activities
 ```
 
-### 2) Registrar estudiante en una actividad
+### Register for an Activity
 
 `POST /activities/{activity_name}/signup?email=correo@dominio.com`
 
-Ejemplo:
+The email must end in `@mergington.edu`. The endpoint returns an error if the activity does not exist or the student is already registered for it.
+
+Example:
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/activities/Chess%20Club/signup?email=ana@mergington.edu"
 ```
 
-## Flujo de la aplicacion
+Example success response:
 
-1. El navegador abre [src/static/index.html](src/static/index.html).
-2. [src/static/app.js](src/static/app.js) hace `GET /activities`.
-3. El usuario envia el formulario.
-4. Se hace `POST /activities/{activity_name}/signup` con el email.
-5. Se muestra mensaje de exito o error en pantalla.
+```json
+{
+    "message": "Signed up ana@mergington.edu for Chess Club"
+}
+```
 
-## Limitaciones actuales
+## Application Flow
 
-- No hay base de datos (los cambios no son persistentes).
-- No se valida si el estudiante ya esta inscrito.
-- No se impide sobrepasar `max_participants`.
+1. The browser opens [src/static/index.html](src/static/index.html).
+2. [src/static/app.js](src/static/app.js) requests the current activity data from `GET /activities`.
+3. The page renders an activity card with capacity information and a registration button for each activity.
+4. The student enters an email address and selects an activity's **Join activity** button.
+5. The frontend sends a request to `POST /activities/{activity_name}/signup` and displays the result.
+6. After a successful registration, the frontend reloads the activities to update their enrollment and availability.
 
-## Ideas de mejora
+## Current Limitations
 
-- Persistencia con SQLite o PostgreSQL.
-- Validaciones de negocio (duplicados y cupos maximos).
-- Autenticacion para administradores y estudiantes.
-- Pruebas automaticas para endpoints.
+- There is no database, so registrations are not persistent.
+- There is no authentication or authorization.
+- The frontend prevents registration when an activity is full, but the API does not enforce `max_participants` for direct requests.
 
-## Licencia
+## Possible Improvements
 
-Este proyecto se distribuye bajo la licencia MIT. Consulta [LICENSE](LICENSE).
+- Add persistence with SQLite or PostgreSQL.
+- Enforce activity capacity in the API.
+- Add authentication for administrators and students.
+- Add automated endpoint and frontend tests.
+
+## License
+
+This project is distributed under the MIT License. See [LICENSE](LICENSE) for details.
 
