@@ -2,9 +2,9 @@
 
 Welcome to your **"Getting Started with GitHub Copilot"** exercise! :robot:
 
-In this exercise, you will be using different GitHub Copilot features to work on a website that allows students of Mergington High School to sign up for extracurricular activities. 🎻 ⚽️ ♟️
+In this exercise, you will be using different GitHub Copilot features to work on a website that allows students of Merg High School to sign up for extracurricular activities. 🎻 ⚽️ ♟️
 
-<img width="600" alt="screenshot of Mergington High School WebApp" src="https://github.com/user-attachments/assets/472398fd-1aa1-4084-b443-4e242deb30d9" />
+<img width="600" alt="screenshot of Merg High School WebApp" src="https://github.com/user-attachments/assets/472398fd-1aa1-4084-b443-4e242deb30d9" />
 
 ### What is GitHub Copilot?
 
