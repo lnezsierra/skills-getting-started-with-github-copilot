@@ -99,7 +99,24 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <small>${participantCount} of ${details.max_participants} spots filled</small>
           </div>
+          <div class="students-section">
+            <h5>Registered Students</h5>
+            <ul class="students-list"></ul>
+          </div>
         `;
+
+        // Insert participant emails as text to avoid interpreting user input as HTML.
+        const studentsList = activityCard.querySelector(".students-list");
+        const participantEmails = details.participants.length
+          ? details.participants
+          : ["No students registered yet"];
+
+        participantEmails.forEach((studentEmail) => {
+          const studentItem = document.createElement("li");
+          studentItem.className = `student-chip${details.participants.length ? "" : " empty"}`;
+          studentItem.textContent = studentEmail;
+          studentsList.appendChild(studentItem);
+        });
 
         // Add a card-specific signup button and disable it at capacity.
         const joinButton = document.createElement("button");

@@ -28,11 +28,35 @@ activities = {
         "max_participants": 12,
         "participants": ["michael@mergington.edu", "daniel@mergington.edu"]
     },
+    "Checkers Club": {
+        "description": "Practice checkers tactics and play friendly matches",
+        "schedule": "Mondays, 3:30 PM - 4:30 PM",
+        "max_participants": 14,
+        "participants": ["lucas@mergington.edu", "mia@mergington.edu"]
+    },
+    "Tabletop Games Club": {
+        "description": "Explore strategy board games and cooperative challenges",
+        "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 16,
+        "participants": ["noah@mergington.edu", "ava@mergington.edu"]
+    },
     "Programming Class": {
         "description": "Learn programming fundamentals and build software projects",
         "schedule": "Tuesdays and Thursdays, 3:30 PM - 4:30 PM",
         "max_participants": 20,
         "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+    },
+    "Math Tutoring": {
+        "description": "Strengthen algebra, geometry, and problem-solving skills",
+        "schedule": "Tuesdays, 4:00 PM - 5:00 PM",
+        "max_participants": 18,
+        "participants": ["liam@mergington.edu", "isabella@mergington.edu"]
+    },
+    "Science Workshop": {
+        "description": "Hands-on experiments in physics, chemistry, and biology",
+        "schedule": "Thursdays, 4:00 PM - 5:30 PM",
+        "max_participants": 18,
+        "participants": ["ethan@mergington.edu", "amelia@mergington.edu"]
     },
     "Gym Class": {
         "description": "Physical education and sports activities",
@@ -75,6 +99,12 @@ activities = {
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
         "max_participants": 15,
         "participants": ["evelyn@mergington.edu", "henry@mergington.edu"]
+    },
+    "Volleyball Club": {
+        "description": "Learn volleyball fundamentals and play weekly scrimmages",
+        "schedule": "Fridays, 4:00 PM - 5:30 PM",
+        "max_participants": 20,
+        "participants": ["henry@mergington.edu", "evelyn@mergington.edu"]
     }
 }
 
@@ -100,25 +130,26 @@ def signup_for_activity(activity_name: str, email: str):
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
 
-    # Retrieve the selected activity for the remaining validation checks.
-    activity = activities[activity_name]
-
-    # Restrict registration to Mergington High School email addresses.
-    if not email.endswith("@mergington.edu"):
+    # Only school emails are allowed for new registrations.
+    normalized_email = email.strip().lower()
+    if not normalized_email.endswith("@mergington.edu"):
         raise HTTPException(
             status_code=400,
             detail="Invalid email domain. Must be @mergington.edu",
         )
 
+    # Retrieve the selected activity for the remaining validation checks.
+    activity = activities[activity_name]
+
     # Prevent the same student from registering more than once.
-    if email in activity["participants"]:
+    if normalized_email in activity["participants"]:
         raise HTTPException(
             status_code=409,
             detail="Student is already registered for this activity",
         )
 
     # Store the registration in the in-memory participant list.
-    activity["participants"].append(email)
+    activity["participants"].append(normalized_email)
 
     # Return a confirmation message for the frontend notification.
-    return {"message": f"Signed up {email} for {activity_name}"}
+    return {"message": f"Signed up {normalized_email} for {activity_name}"}
