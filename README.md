@@ -84,7 +84,7 @@ curl http://127.0.0.1:8000/activities
 Ejemplo:
 
 ```bash
-curl -X POST "http://127.0.0.1:8000/activities/Chess%20Club/signup?email=ana@mergington.edu"
+curl -X POST "http://127.0.0.1:8000/activities/Chess%20Club/signup?email=ana@merghigh.edu"
 ```
 
 ## Flujo de la aplicacion

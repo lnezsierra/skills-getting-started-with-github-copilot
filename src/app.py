@@ -2,7 +2,7 @@
 High School Management System API
 
 A super simple FastAPI application that allows students to view and sign up
-for extracurricular activities at Mergington High School.
+for extracurricular activities at Merg High School.
 """
 
 from fastapi import FastAPI, HTTPException
@@ -11,7 +11,7 @@ from fastapi.responses import RedirectResponse
 import os
 from pathlib import Path
 
-app = FastAPI(title="Mergington High School API",
+app = FastAPI(title="Merg High School API",
               description="API for viewing and signing up for extracurricular activities")
 
 # Serve frontend files (HTML/CSS/JS) from /static
@@ -25,55 +25,55 @@ activities = {
         "description": "Learn strategies and compete in chess tournaments",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
         "max_participants": 12,
-        "participants": ["michael@mergington.edu", "daniel@mergington.edu"]
+        "participants": ["michael@merghigh.edu", "daniel@merghigh.edu"]
     },
     "Programming Class": {
         "description": "Learn programming fundamentals and build software projects",
         "schedule": "Tuesdays and Thursdays, 3:30 PM - 4:30 PM",
         "max_participants": 20,
-        "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+        "participants": ["emma@merghigh.edu", "sophia@merghigh.edu"]
     },
     "Gym Class": {
         "description": "Physical education and sports activities",
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
-        "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+        "participants": ["john@merghigh.edu", "olivia@merghigh.edu"]
     },
     "Soccer Team": {
         "description": "Practice soccer skills and compete in interschool matches",
         "schedule": "Tuesdays and Thursdays, 4:00 PM - 5:30 PM",
         "max_participants": 22,
-        "participants": ["lucas@mergington.edu", "mia@mergington.edu"]
+        "participants": ["lucas@merghigh.edu", "mia@merghigh.edu"]
     },
     "Basketball Team": {
         "description": "Develop basketball fundamentals and play competitive games",
         "schedule": "Mondays and Wednesdays, 4:00 PM - 5:30 PM",
         "max_participants": 15,
-        "participants": ["ethan@mergington.edu", "ava@mergington.edu"]
+        "participants": ["ethan@merghigh.edu", "ava@merghigh.edu"]
     },
     "Art Club": {
         "description": "Explore drawing, painting, and mixed-media techniques",
         "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
         "max_participants": 18,
-        "participants": ["isabella@mergington.edu", "noah@mergington.edu"]
+        "participants": ["isabella@merghigh.edu", "noah@merghigh.edu"]
     },
     "Drama Club": {
         "description": "Practice acting, stagecraft, and theatrical performance",
         "schedule": "Tuesdays, 3:30 PM - 5:00 PM",
         "max_participants": 20,
-        "participants": ["amelia@mergington.edu", "liam@mergington.edu"]
+        "participants": ["amelia@merghigh.edu", "liam@merghigh.edu"]
     },
     "Debate Team": {
         "description": "Build critical thinking and public speaking through structured debates",
         "schedule": "Thursdays, 3:30 PM - 5:00 PM",
         "max_participants": 16,
-        "participants": ["harper@mergington.edu", "james@mergington.edu"]
+        "participants": ["harper@merghigh.edu", "james@merghigh.edu"]
     },
     "Science Olympiad": {
         "description": "Solve scientific challenges and prepare for academic competitions",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
         "max_participants": 15,
-        "participants": ["evelyn@mergington.edu", "henry@mergington.edu"]
+        "participants": ["evelyn@merghigh.edu", "henry@merghigh.edu"]
     }
 }
 
@@ -100,11 +100,11 @@ def signup_for_activity(activity_name: str, email: str):
     # Retrieve activity and append the student email.
     activity = activities[activity_name]
 
-    # Validate that the email is @mergington.edu
-    if not email.endswith("@mergington.edu"):
+    # Validate that the email is @merghigh.edu
+    if not email.endswith("@merghigh.edu"):
         raise HTTPException(
             status_code=400,
-            detail="Invalid email domain. Must be @mergington.edu",
+            detail="Invalid email domain. Must be @merghigh.edu",
         )
     if email in activity["participants"]:
         raise HTTPException(
