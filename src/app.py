@@ -11,10 +11,11 @@ from fastapi.responses import RedirectResponse
 import os
 from pathlib import Path
 
+# Configure the API metadata displayed in the generated documentation.
 app = FastAPI(title="Mergington High School API",
               description="API for viewing and signing up for extracurricular activities")
 
-# Serve frontend files (HTML/CSS/JS) from /static
+# Resolve and mount the frontend assets under the /static URL path.
 current_dir = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
           "static")), name="static")
@@ -81,38 +82,43 @@ activities = {
 @app.get("/")
 def root():
     """Redirect root path to the static web application."""
+    # Send visitors directly to the frontend entry page.
     return RedirectResponse(url="/static/index.html")
 
 
 @app.get("/activities")
 def get_activities():
     """Return all activities with metadata and current participants."""
+    # FastAPI serializes the activity dictionary as JSON.
     return activities
 
 
 @app.post("/activities/{activity_name}/signup")
 def signup_for_activity(activity_name: str, email: str):
     """Sign up a student for an activity"""
-    # Ensure the requested activity exists.
+    # Reject requests for activities that are not in the database.
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
 
-    # Retrieve activity and append the student email.
+    # Retrieve the selected activity for the remaining validation checks.
     activity = activities[activity_name]
 
-    # Validate that the email is @mergington.edu
+    # Restrict registration to Mergington High School email addresses.
     if not email.endswith("@mergington.edu"):
         raise HTTPException(
             status_code=400,
             detail="Invalid email domain. Must be @mergington.edu",
         )
+
+    # Prevent the same student from registering more than once.
     if email in activity["participants"]:
         raise HTTPException(
             status_code=409,
             detail="Student is already registered for this activity",
         )
 
+    # Store the registration in the in-memory participant list.
     activity["participants"].append(email)
 
-    # Return a human-readable confirmation for the frontend.
+    # Return a confirmation message for the frontend notification.
     return {"message": f"Signed up {email} for {activity_name}"}

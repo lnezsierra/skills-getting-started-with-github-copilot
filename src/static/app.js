@@ -1,26 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Cache DOM references used throughout the app.
+  // Cache the page elements shared by the signup and rendering flows.
   const activitiesList = document.getElementById("activities-list");
   const emailInput = document.getElementById("email");
   const messageDiv = document.getElementById("message");
 
+  // Submit one student's email for the activity selected from its card.
   async function signupForActivity(activity, joinButton) {
+    // Stop before making a request when the email field is invalid.
     if (!emailInput.reportValidity()) {
       emailInput.focus();
       return;
     }
 
+    // Disable the button while the request is in progress.
     const originalButtonText = joinButton.textContent;
     joinButton.disabled = true;
     joinButton.textContent = "Joining...";
 
     try {
+      // Send the activity and email to the signup endpoint.
       const response = await fetch(
         `/activities/${encodeURIComponent(activity)}/signup?email=${encodeURIComponent(emailInput.value)}`,
         { method: "POST" }
       );
       const result = await response.json();
 
+      // Show the API result and refresh availability after a successful signup.
       if (response.ok) {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
@@ -31,10 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.className = "error";
       }
     } catch (error) {
+      // Handle network failures that do not return an API response.
       messageDiv.textContent = "Failed to sign up. Please try again.";
       messageDiv.className = "error";
       console.error("Error signing up:", error);
     } finally {
+      // Restore the button and briefly display the result message.
       joinButton.disabled = false;
       joinButton.textContent = originalButtonText;
       messageDiv.classList.remove("hidden");
@@ -45,21 +52,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Fetch activities from the backend and render cards.
+  // Fetch the latest activity data and rebuild the activity cards.
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
       const activities = await response.json();
 
-      // Clear loading message
+      // Remove the loading placeholder before inserting activity cards.
       activitiesList.innerHTML = "";
 
-      // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
+        // Create the card shell for the current activity.
         const activityCard = document.createElement("div");
         activityCard.className = "activity-card";
 
-        // Compute remaining seats based on current participants.
+        // Calculate capacity values used by the label and progress meter.
         const participantCount = details.participants.length;
         const spotsLeft = Math.max(details.max_participants - participantCount, 0);
         const capacityPercent = Math.min(
@@ -69,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const availabilityClass = spotsLeft === 0 ? "full" : spotsLeft <= 3 ? "low" : "available";
         const availabilityText = spotsLeft === 0 ? "Activity full" : `${spotsLeft} spots left`;
 
+        // Render the activity details and accessible capacity indicator.
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
@@ -93,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
 
+        // Add a card-specific signup button and disable it at capacity.
         const joinButton = document.createElement("button");
         joinButton.type = "button";
         joinButton.className = "activity-join-button";
@@ -104,14 +113,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         activityCard.appendChild(joinButton);
 
+        // Insert the completed card into the activity list.
         activitiesList.appendChild(activityCard);
       });
     } catch (error) {
+      // Replace the list with a useful message when activities cannot load.
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
       console.error("Error fetching activities:", error);
     }
   }
 
-  // Initial data load when the page is ready.
+  // Load activities once the page and cached elements are ready.
   fetchActivities();
 });
