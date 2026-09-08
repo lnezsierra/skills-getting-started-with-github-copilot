@@ -74,6 +74,61 @@ section h3 {
   margin-bottom: 8px;
 }
 
+.availability {
+  margin-top: 14px;
+}
+
+.availability-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.availability-summary span,
+.availability small {
+  color: #4b5563;
+}
+
+.capacity-meter {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 5px;
+  background-color: #e5e7eb;
+}
+
+.capacity-meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background-color: #2e7d32;
+  transition: width 0.35s ease;
+}
+
+.availability.low .capacity-meter-fill {
+  background-color: #ed6c02;
+}
+
+.availability.full .capacity-meter-fill {
+  background-color: #c62828;
+}
+
+.availability.low .availability-summary span {
+  color: #a54800;
+  font-weight: bold;
+}
+
+.availability.full .availability-summary span {
+  color: #c62828;
+  font-weight: bold;
+}
+
+.availability small {
+  display: block;
+  margin-top: 5px;
+}
+
 .form-group {
   margin-bottom: 15px;
 }

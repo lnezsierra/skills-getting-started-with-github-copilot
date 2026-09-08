@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
+      activitySelect.length = 1;
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -20,13 +21,37 @@ document.addEventListener("DOMContentLoaded", () => {
         activityCard.className = "activity-card";
 
         // Compute remaining seats based on current participants.
-        const spotsLeft = details.max_participants - details.participants.length;
+        const participantCount = details.participants.length;
+        const spotsLeft = Math.max(details.max_participants - participantCount, 0);
+        const capacityPercent = Math.min(
+          Math.round((participantCount / details.max_participants) * 100),
+          100
+        );
+        const availabilityClass = spotsLeft === 0 ? "full" : spotsLeft <= 3 ? "low" : "available";
+        const availabilityText = spotsLeft === 0 ? "Activity full" : `${spotsLeft} spots left`;
 
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <div class="availability ${availabilityClass}">
+            <div class="availability-summary">
+              <strong>Availability</strong>
+              <span>${availabilityText}</span>
+            </div>
+            <div
+              class="capacity-meter"
+              role="progressbar"
+              aria-label="${name} capacity"
+              aria-valuemin="0"
+              aria-valuemax="${details.max_participants}"
+              aria-valuenow="${participantCount}"
+              aria-valuetext="${participantCount} of ${details.max_participants} spots filled"
+            >
+              <span class="capacity-meter-fill" style="width: ${capacityPercent}%"></span>
+            </div>
+            <small>${participantCount} of ${details.max_participants} spots filled</small>
+          </div>
         `;
 
         activitiesList.appendChild(activityCard);
@@ -65,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        await fetchActivities();
       } else {
         // Error path: prefer API detail when available.
         messageDiv.textContent = result.detail || "An error occurred";
