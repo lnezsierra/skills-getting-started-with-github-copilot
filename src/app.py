@@ -38,6 +38,42 @@ activities = {
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    "Soccer Team": {
+        "description": "Practice soccer skills and compete in interschool matches",
+        "schedule": "Tuesdays and Thursdays, 4:00 PM - 5:30 PM",
+        "max_participants": 22,
+        "participants": ["lucas@mergington.edu", "mia@mergington.edu"]
+    },
+    "Basketball Team": {
+        "description": "Develop basketball fundamentals and play competitive games",
+        "schedule": "Mondays and Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 15,
+        "participants": ["ethan@mergington.edu", "ava@mergington.edu"]
+    },
+    "Art Club": {
+        "description": "Explore drawing, painting, and mixed-media techniques",
+        "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 18,
+        "participants": ["isabella@mergington.edu", "noah@mergington.edu"]
+    },
+    "Drama Club": {
+        "description": "Practice acting, stagecraft, and theatrical performance",
+        "schedule": "Tuesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 20,
+        "participants": ["amelia@mergington.edu", "liam@mergington.edu"]
+    },
+    "Debate Team": {
+        "description": "Build critical thinking and public speaking through structured debates",
+        "schedule": "Thursdays, 3:30 PM - 5:00 PM",
+        "max_participants": 16,
+        "participants": ["harper@mergington.edu", "james@mergington.edu"]
+    },
+    "Science Olympiad": {
+        "description": "Solve scientific challenges and prepare for academic competitions",
+        "schedule": "Fridays, 3:30 PM - 5:00 PM",
+        "max_participants": 15,
+        "participants": ["evelyn@mergington.edu", "henry@mergington.edu"]
     }
 }
 
@@ -63,6 +99,19 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Retrieve activity and append the student email.
     activity = activities[activity_name]
+
+    # Validate that the email is @mergington.edu
+    if not email.endswith("@mergington.edu"):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid email domain. Must be @mergington.edu",
+        )
+    if email in activity["participants"]:
+        raise HTTPException(
+            status_code=409,
+            detail="Student is already registered for this activity",
+        )
+
     activity["participants"].append(email)
 
     # Return a human-readable confirmation for the frontend.
