@@ -129,6 +129,11 @@ section h3 {
   margin-top: 5px;
 }
 
+.activity-join-button {
+  width: 100%;
+  margin-top: 14px;
+}
+
 .form-group {
   margin-bottom: 15px;
 }
@@ -139,8 +144,7 @@ section h3 {
   font-weight: bold;
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -159,8 +163,19 @@ button {
   transition: background-color 0.2s;
 }
 
-button:hover {
+button:not(:disabled):hover {
   background-color: #3949ab;
+}
+
+button:disabled {
+  color: #6b7280;
+  background-color: #e5e7eb;
+  cursor: not-allowed;
+}
+
+button:focus-visible {
+  outline: 3px solid #ffca28;
+  outline-offset: 2px;
 }
 
 .message {

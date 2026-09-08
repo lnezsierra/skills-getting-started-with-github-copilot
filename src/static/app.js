@@ -1,11 +1,51 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Cache DOM references used throughout the app.
   const activitiesList = document.getElementById("activities-list");
-  const activitySelect = document.getElementById("activity");
-  const signupForm = document.getElementById("signup-form");
+  const emailInput = document.getElementById("email");
   const messageDiv = document.getElementById("message");
 
-  // Fetch activities from the backend and render cards + select options.
+  async function signupForActivity(activity, joinButton) {
+    if (!emailInput.reportValidity()) {
+      emailInput.focus();
+      return;
+    }
+
+    const originalButtonText = joinButton.textContent;
+    joinButton.disabled = true;
+    joinButton.textContent = "Joining...";
+
+    try {
+      const response = await fetch(
+        `/activities/${encodeURIComponent(activity)}/signup?email=${encodeURIComponent(emailInput.value)}`,
+        { method: "POST" }
+      );
+      const result = await response.json();
+
+      if (response.ok) {
+        messageDiv.textContent = result.message;
+        messageDiv.className = "success";
+        emailInput.value = "";
+        await fetchActivities();
+      } else {
+        messageDiv.textContent = result.detail || "An error occurred";
+        messageDiv.className = "error";
+      }
+    } catch (error) {
+      messageDiv.textContent = "Failed to sign up. Please try again.";
+      messageDiv.className = "error";
+      console.error("Error signing up:", error);
+    } finally {
+      joinButton.disabled = false;
+      joinButton.textContent = originalButtonText;
+      messageDiv.classList.remove("hidden");
+
+      setTimeout(() => {
+        messageDiv.classList.add("hidden");
+      }, 5000);
+    }
+  }
+
+  // Fetch activities from the backend and render cards.
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
@@ -13,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
-      activitySelect.length = 1;
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -54,63 +93,24 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
 
-        activitiesList.appendChild(activityCard);
+        const joinButton = document.createElement("button");
+        joinButton.type = "button";
+        joinButton.className = "activity-join-button";
+        joinButton.disabled = spotsLeft === 0;
+        joinButton.textContent = spotsLeft === 0 ? "Activity full" : "Join activity";
+        joinButton.setAttribute("aria-label", `${joinButton.textContent}: ${name}`);
+        joinButton.addEventListener("click", () => {
+          signupForActivity(name, joinButton);
+        });
+        activityCard.appendChild(joinButton);
 
-        // Keep the signup dropdown synchronized with visible activities.
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        activitySelect.appendChild(option);
+        activitiesList.appendChild(activityCard);
       });
     } catch (error) {
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
       console.error("Error fetching activities:", error);
     }
   }
-
-  // Submit signup requests to the API and display server feedback.
-  signupForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const activity = document.getElementById("activity").value;
-
-    try {
-      const response = await fetch(
-        `/activities/${encodeURIComponent(activity)}/signup?email=${encodeURIComponent(email)}`,
-        {
-          method: "POST",
-        }
-      );
-
-      const result = await response.json();
-
-      if (response.ok) {
-        // Success path: show confirmation and clear form.
-        messageDiv.textContent = result.message;
-        messageDiv.className = "success";
-        signupForm.reset();
-        await fetchActivities();
-      } else {
-        // Error path: prefer API detail when available.
-        messageDiv.textContent = result.detail || "An error occurred";
-        messageDiv.className = "error";
-      }
-
-      messageDiv.classList.remove("hidden");
-
-      // Hide message after 5 seconds
-      setTimeout(() => {
-        messageDiv.classList.add("hidden");
-      }, 5000);
-    } catch (error) {
-      // Network or unexpected runtime errors.
-      messageDiv.textContent = "Failed to sign up. Please try again.";
-      messageDiv.className = "error";
-      messageDiv.classList.remove("hidden");
-      console.error("Error signing up:", error);
-    }
-  });
 
   // Initial data load when the page is ready.
   fetchActivities();
